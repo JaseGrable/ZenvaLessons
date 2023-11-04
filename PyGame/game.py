@@ -40,6 +40,8 @@ class Game:
 
     def run_game_loop(self):
 
+        player_direction = 0
+
         while True:
             # Handle events
             events = pygame.event.get()
@@ -47,8 +49,17 @@ class Game:
                 # If there's a QUIT event, we break the loop and exit the method
                 if event.type == pygame.QUIT:
                     return
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        player_direction = -1
+                    elif event.key == pygame.K_DOWN:
+                        player_direction = 1
+                elif event.type == pygame.KEYUP:
+                    if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                        player_direction = 0
 
             # Execute logic
+            self.player.move(player_direction)
             # Update display
             self.draw_objects()
 

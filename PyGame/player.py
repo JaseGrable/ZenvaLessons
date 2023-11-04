@@ -1,12 +1,16 @@
 from gameObject import GameObject
 
-class Player(GameObject):
-        
-        def __init__(self, x, y, width, height, image_path):
-        image = pygame.image.load(image_path)
-        self.image = pygame.transform.scale(image, (width, height))
+# Our Player class is a subclass of GameObject
 
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
+
+class Player(GameObject):
+
+    def __init__(self, x, y, width, height, image_path, speed):
+        super().__init__(x, y, width, height, image_path)
+
+        self.speed = speed
+
+    # Moving the player character on the screen
+
+    def move(self, direction):
+        self.y += (direction * self.speed)
