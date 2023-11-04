@@ -85,7 +85,25 @@ class Game:
     def take_turn(self):
         prompt = self.get_room_prompt()
         selection = int(input(prompt))
-        self.select_object(selection - 1)
+        # Only takes the selection prompted if it's a valid input
+        if selection >= 1 and selection <= 5:
+            self.select_object(selection - 1)
+            self.take_turn()
+        else:
+            # If we're in the else branch it means that the player is guessing a code
+            is_code_correct = self.guess_code(selection)
+            if is_code_correct:
+                # If the entered code is correct, the player wins
+                print("Congratulations, you win!")
+            else:
+                # If they have already guessed the code incorrectly 3 times, they lose the game
+                if self.attempts == 3:
+                    print("Game over, you ran out of guesses. Better luck next time!")
+                else:
+                    # If the player still has attempts left, they'll take another turn
+                    print(
+                        f"Incorrect, you have used {self.attempts}/3 attempts.\n")
+                    self.take_turn()
 
     # Shows the option to enter the code or interact further with the objects in the room
     def get_room_prompt(self):
@@ -102,11 +120,30 @@ class Game:
         selected_object = self.room.game_objects[index]
         prompt = self.get_object_interaction_string(selected_object.name)
         interaction = input(prompt)
-        print(interaction)
+        clue = self.interact_with_object(selected_object, interaction)
+        print(clue)
 
     # Displays message to get type of interaction with object
     def get_object_interaction_string(self, name):
         return f"How do you want to interact with the {name}?\n1. Look\n2. Touch\n3. Smell\n"
+
+    # Shows the interaction message to the player
+    def interact_with_object(self, object, interaction):
+        if interaction == "1":
+            return object.look()
+        elif interaction == "2":
+            return object.touch()
+        else:
+            return object.sniff()
+
+    # Compares the code entered to the code of the room
+    def guess_code(self, code):
+        if self.room.check_code(code):
+            return True
+        else:
+            # If the codes don't match, increases attempts variable by 1
+            self.attempts += 1
+            return False
 
 
 # Here we're creating an object of our Game class
