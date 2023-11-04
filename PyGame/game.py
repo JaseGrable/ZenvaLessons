@@ -1,7 +1,8 @@
 import pygame
 from gameObject import GameObject
-# Importing the Player class
 from player import Player
+# Importing the Enemy class
+from enemy import Enemy
 
 
 class Game:
@@ -18,9 +19,9 @@ class Game:
         self.background = GameObject(
             0, 0, self.width, self.height, 'assets/background.png')
         self.treasure = GameObject(280, 35, 40, 40, 'assets/treasure.png')
+        self.player = Player(280, 530, 40, 40, 'assets/player.png', 1)
 
-        # Creating the Player asset
-        self.player = Player(280, 530, 40, 40, 'assets/player.png', 10)
+        self.enemy = Enemy(0, 450, 40, 40, 'assets/enemy.png', 5)
 
         self.clock = pygame.time.Clock()
 
@@ -32,14 +33,14 @@ class Game:
                               (self.background.x, self.background.y))
         self.game_window.blit(self.treasure.image,
                               (self.treasure.x, self.treasure.y))
-
         self.game_window.blit(
             self.player.image, (self.player.x, self.player.y))
+
+        self.game_window.blit(self.enemy.image, (self.enemy.x, self.enemy.y))
 
         pygame.display.update()
 
     def run_game_loop(self):
-
         player_direction = 0
 
         while True:
@@ -49,17 +50,24 @@ class Game:
                 # If there's a QUIT event, we break the loop and exit the method
                 if event.type == pygame.QUIT:
                     return
+
+                # Listening for when a key is pressed down on the keyboard
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
                         player_direction = -1
                     elif event.key == pygame.K_DOWN:
                         player_direction = 1
+
+                # Stopping the player when arrow keys are released
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                         player_direction = 0
 
             # Execute logic
-            self.player.move(player_direction)
+            self.player.move(player_direction, self.height)
+            # Moving the enemy
+            self.enemy.move(self.width)
+
             # Update display
             self.draw_objects()
 
